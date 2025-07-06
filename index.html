@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario de Pedido</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    input, select, button { width: 100%; padding: 10px; margin: 8px 0; }
+    button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
+    #precio { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h2>Formulario de Pedido</h2>
+  <form id="pedidoForm">
+    <input type="text" name="nombre" placeholder="Nombre" required>
+    <input type="text" name="apellido" placeholder="Apellido" required>
+    <input type="email" name="correo" placeholder="Correo" required>
+    <input type="text" name="telefono" placeholder="Teléfono" required>
+    <input type="text" name="direccion" placeholder="Dirección" required>
+
+    <label>Producto:</label>
+    <select name="producto" id="producto" onchange="actualizarPrecio()" required>
+      <option disabled selected value="">--Selecciona un producto--</option>
+      <option>Fusionadora Fujikura 35S</option>
+      <option>Fusionadora Connection CSP-2101 (4 motores)</option>
+      <option>Fusionadora Signal Fire AI-9 (6 motores)</option>
+      <option>Peladora Proskit 8PK-326</option>
+      <option>Peladora Fibra Optica CFS-3 Triple ranura</option>
+      <option>Cortadora de Fibra Óptica Tawa FC-30</option>
+      <option>Cortadora de fibra (cleaver)</option>
+      <option>Cortadora de Fibra Óptica FC-6S (Cleaver)</option>
+      <option>Caja Nap IP68 Splitter 1×16 APC</option>
+      <option>Caja Nap de 1x8 completa NAP-APC-8-C</option>
+      <option>MANGA DE EMPALME DE FIBRA FCL-H25</option>
+      <option>Manga de empalme Lineal 12-24 Hilos</option>
+      <option>Patchcord Duplex de Fibra UPC/SC Xtring</option>
+      <option>Conectores Mecánicos APC | UPC SC Nitrotel</option>
+      <option>Adaptadores UPC | APC Xtring</option>
+      <option>Conector Rj45 Siemon Cat 6A Z-Plug</option>
+      <option>Deschaquetadora Fibra Drop</option>
+      <option>Ponchadora Modular Pro-3S Nexxt</option>
+      <option>OTDR Mini Pro 9 Funciones</option>
+      <option>KOMSHINE OTDR QX-55-S</option>
+      <option>OTDR EXFO 715B M1 con IOLM</option>
+      <option>Convertidor Fibra Óptica 100Mb SC 1 Hilo</option>
+      <option>Convertidor TP-LINK MC11XCS</option>
+      <option>Cable Drop 1 hilo Bobina Madera</option>
+      <option>Fibra Óptica Mini Adss 6 Hilos 4km</option>
+      <option>Rollo Cable UTP Owire Cat6 305m</option>
+    </select>
+
+    <label>Cantidad:</label>
+    <input type="number" name="cantidad" id="cantidad" value="1" min="1" onchange="actualizarPrecio()" required>
+
+    <label>Total estimado:</label>
+    <input type="text" id="precio" readonly>
+
+    <button type="submit">Enviar Pedido</button>
+  </form>
+
+  <p id="respuesta"></p>
+
+  <script>
+    const precios = {
+      "Fusionadora Fujikura 35S": 2250,
+      "Fusionadora Connection CSP-2101 (4 motores)": 1677.93,
+      "Fusionadora Signal Fire AI-9 (6 motores)": 1250,
+      "Peladora Proskit 8PK-326": 14,
+      "Peladora Fibra Optica CFS-3 Triple ranura": 10,
+      "Cortadora de Fibra Óptica Tawa FC-30": 85,
+      "Cortadora de fibra (cleaver)": 62,
+      "Cortadora de Fibra Óptica FC-6S (Cleaver)": 29,
+      "Caja Nap IP68 Splitter 1×16 APC": 58,
+      "Caja Nap de 1x8 completa NAP-APC-8-C": 19,
+      "MANGA DE EMPALME DE FIBRA FCL-H25": 84,
+      "Manga de empalme Lineal 12-24 Hilos": 30,
+      "Patchcord Duplex de Fibra UPC/SC Xtring": 3,
+      "Conectores Mecánicos APC | UPC SC Nitrotel": 1,
+      "Adaptadores UPC | APC Xtring": 0.99,
+      "Conector Rj45 Siemon Cat 6A Z-Plug": 19.5,
+      "Deschaquetadora Fibra Drop": 15,
+      "Ponchadora Modular Pro-3S Nexxt": 20,
+      "OTDR Mini Pro 9 Funciones": 420,
+      "KOMSHINE OTDR QX-55-S": 690,
+      "OTDR EXFO 715B M1 con IOLM": 3400,
+      "Convertidor Fibra Óptica 100Mb SC 1 Hilo": 30,
+      "Convertidor TP-LINK MC11XCS": 60,
+      "Cable Drop 1 hilo Bobina Madera": 60,
+      "Fibra Óptica Mini Adss 6 Hilos 4km": 950,
+      "Rollo Cable UTP Owire Cat6 305m": 160
+    };
+
+    function actualizarPrecio() {
+      const prod = document.getElementById("producto").value;
+      const cantidad = parseInt(document.getElementById("cantidad").value || 1);
+      const precio = precios[prod] || 0;
+      document.getElementById("precio").value = "$" + (precio * cantidad).toFixed(2);
+    }
+
+    document.getElementById("pedidoForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const producto = this.producto.value;
+      const cantidad = parseInt(this.cantidad.value);
+      const precioUnitario = precios[producto] || 0;
+
+      const data = {
+        nombre: this.nombre.value,
+        apellido: this.apellido.value,
+        correo: this.correo.value,
+        telefono: this.telefono.value,
+        direccion: this.direccion.value,
+        producto,
+        cantidad,
+        precio_unitario: precioUnitario
+      };
+
+      try {
+        const res = await fetch('http://192.168.100.8:3030/api/pedido', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const text = await res.text();
+        document.getElementById('respuesta').innerText = text;
+        this.reset();
+        document.getElementById('precio').value = '';
+      } catch (err) {
+        document.getElementById('respuesta').innerText = '❌ Error al enviar pedido.';
+      }
+    });
+  </script>
+</body>
+</html>
